@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CrystalChaos University</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="background"></div>
+
+    <header>
+        <div class="logo">
+            <div class="crystal">◆</div>
+            <div>
+                <h1>CrystalChaos</h1>
+                <span>UNIVERSITY</span>
+            </div>
+        </div>
+
+        <button class="admin-button" onclick="openAdmin()">
+            Admin Mode
+        </button>
+    </header>
+
+    <main>
+
+        <section class="hero">
+            <div class="hero-content">
+                <p class="tag">WELCOME TO THE SERVER</p>
+
+                <h2>
+                    Build your future at
+                    <span>CrystalChaos University</span>
+                </h2>
+
+                <p class="description">
+                    Apply to become part of the CrystalChaos University community.
+                    Choose your role, meet new people, and create your own story.
+                </p>
+
+                <a href="#application" class="start-button">
+                    Start Application
+                    <span>→</span>
+                </a>
+            </div>
+
+            <div class="floating-crystal crystal-one">◆</div>
+            <div class="floating-crystal crystal-two">◆</div>
+            <div class="floating-crystal crystal-three">◆</div>
+        </section>
+
+        <section id="application" class="application-section">
+
+            <div class="section-title">
+                <p class="tag">JOIN THE COMMUNITY</p>
+                <h2>University Application</h2>
+                <p>Fill out the form below to apply to CrystalChaos University.</p>
+            </div>
+
+            <form id="applicationForm">
+
+                <div class="form-card">
+                    <div class="question-number">01</div>
+
+                    <label for="ign">
+                        What is your Minecraft In-Game-Name?
+                    </label>
+
+                    <input
+                        type="text"
+                        id="ign"
+                        placeholder="e.g. Steve"
+                        required
+                    >
+                </div>
+
+                <div class="form-card">
+                    <div class="question-number">02</div>
+
+                    <label for="role">
+                        What role would you like to apply for?
+                    </label>
+
+                    <select id="role" required>
+                        <option value="">Select a role</option>
+                        <option value="Student">Student</option>
+                        <option value="Teacher">Teacher</option>
+                        <option value="Police">Police</option>
+                        <option value="Janitor">Janitor</option>
+                    </select>
+                </div>
+
+                <div class="form-card">
+                    <div class="question-number">03</div>
+
+                    <label for="age">
+                        How old are you?
+                    </label>
+
+                    <input
+                        type="number"
+                        id="age"
+                        placeholder="Your age"
+                        min="1"
+                        max="100"
+                        required
+                    >
+                </div>
+
+                <div class="form-card">
+                    <div class="question-number">04</div>
+
+                    <label for="experience">
+                        Why should we accept you?
+                    </label>
+
+                    <textarea
+                        id="experience"
+                        placeholder="Tell us a little about yourself..."
+                        required
+                    ></textarea>
+                </div>
+
+                <div class="form-card">
+                    <div class="question-number">05</div>
+
+                    <label for="discord">
+                        What is your Discord username?
+                    </label>
+
+                    <input
+                        type="text"
+                        id="discord"
+                        placeholder="e.g. player123"
+                        required
+                    >
+                </div>
+
+                <button type="submit" class="submit-button">
+                    Submit Application
+                    <span>→</span>
+                </button>
+
+            </form>
+
+            <div id="successMessage" class="success-message">
+                <div class="success-icon">✓</div>
+                <h2>Application Submitted</h2>
+                <p>
+                    Your application has been sent to the CrystalChaos University
+                    administration team.
+                </p>
+            </div>
+
+        </section>
+
+    </main>
+
+    <div id="adminOverlay" class="admin-overlay">
+
+        <div class="admin-panel">
+
+            <button class="close-button" onclick="closeAdmin()">×</button>
+
+            <div class="admin-header">
+                <p class="tag">RESTRICTED AREA</p>
+                <h2>Admin Mode</h2>
+                <p>Enter the secret access code to continue.</p>
+            </div>
+
+            <div id="codeSection">
+
+                <input
+                    type="password"
+                    id="secretCode"
+                    placeholder="Enter secret code..."
+                >
+
+                <button class="unlock-button" onclick="unlockAdmin()">
+                    Unlock Admin Mode
+                </button>
+
+                <p id="errorMessage"></p>
+
+            </div>
+
+            <div id="applicationsSection" class="applications-section">
+
+                <div class="admin-success">
+                    <div class="success-icon">✓</div>
+                    <h2>Admin Access Granted</h2>
+                    <p>Welcome to the CrystalChaos University administration panel.</p>
+                </div>
+
+                <h3>Submitted Applications</h3>
+
+                <div id="applicationsList"></div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <script>
+
+        const SECRET_CODE = "CrystalChaos-189502";
+
+        let applications = JSON.parse(
+            localStorage.getItem("crystalChaosApplications")
+        ) || [];
+
+        const applicationForm = document.getElementById("applicationForm");
+
+        applicationForm.addEventListener("submit", function(event) {
+
+            event.preventDefault();
+
+            const application = {
+                ign: document.getElementById("ign").value,
+                role: document.getElementById("role").value,
+                age: document.getElementById("age").value,
+                experience: document.getElementById("experience").value,
+                discord: document.getElementById("discord").value,
+                date: new Date().toLocaleString()
+            };
+
+            applications.push(application);
+
+            localStorage.setItem(
+                "crystalChaosApplications",
+                JSON.stringify(applications)
+            );
+
+            applicationForm.style.display = "none";
+
+            document.getElementById("successMessage").style.display = "block";
+
+        });
+
+        function openAdmin() {
+
+            document.getElementById("adminOverlay").classList.add("active");
+
+            document.getElementById("codeSection").style.display = "block";
+
+            document.getElementById("applicationsSection").style.display = "none";
+
+        }
+
+        function closeAdmin() {
+
+            document.getElementById("adminOverlay").classList.remove("active");
+
+        }
+
+        function unlockAdmin() {
+
+            const enteredCode =
+                document.getElementById("secretCode").value;
+
+            const errorMessage =
+                document.getElementById("errorMessage");
+
+            if (enteredCode === SECRET_CODE) {
+
+                document.getElementById("codeSection").style.display = "none";
+
+                document.getElementById("applicationsSection").style.display = "block";
+
+                document
+                    .getElementById("adminOverlay")
+                    .classList.add("unlocked");
+
+                displayApplications();
+
+            } else {
+
+                errorMessage.textContent =
+                    "Incorrect code. Access denied.";
+
+                document
+                    .getElementById("secretCode")
+                    .classList.add("shake");
+
+                setTimeout(() => {
+
+                    document
+                        .getElementById("secretCode")
+                        .classList.remove("shake");
+
+                }, 500);
+
+            }
+
+        }
+
+        function displayApplications() {
+
+            const applicationsList =
+                document.getElementById("applicationsList");
+
+            applicationsList.innerHTML = "";
+
+            if (applications.length === 0) {
+
+                applicationsList.innerHTML = `
+                    <div class="empty-applications">
+                        No applications have been submitted yet.
+                    </div>
+                `;
+
+                return;
+
+            }
+
+            applications.forEach((application, index) => {
+
+                const applicationCard = document.createElement("div");
+
+                applicationCard.className = "application-card";
+
+                applicationCard.innerHTML = `
+
+                    <div class="application-top">
+
+                        <div>
+                            <h3>${application.ign}</h3>
+                            <span class="role-badge">
+                                ${application.role}
+                            </span>
+                        </div>
+
+                        <span class="application-date">
+                            ${application.date}
+                        </span>
+
+                    </div>
+
+                    <div class="application-details">
+
+                        <p>
+                            <strong>Age:</strong>
+                            ${application.age}
+                        </p>
+
+                        <p>
+                            <strong>Discord:</strong>
+                            ${application.discord}
+                        </p>
+
+                        <p>
+                            <strong>Why they should be accepted:</strong>
+                            ${application.experience}
+                        </p>
+
+                    </div>
+
+                `;
+
+                applicationsList.appendChild(applicationCard);
+
+            });
+
+        }
+
+        document
+            .getElementById("adminOverlay")
+            .addEventListener("click", function(event) {
+
+                if (event.target === this) {
+
+                    closeAdmin();
+
+                }
+
+            });
+
+    </script>
+
+</body>
+</html>
